@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexCompare – UK's Smartest Comparison Platform</title>
+  <meta name="description" content="Compare SRA regulated conveyancers across the UK. Fixed fees, no hidden costs. Save on buying, selling, remortgaging and more.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              300: '#93c5fd',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+              950: '#172554'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            heading: ['Plus Jakarta Sans', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .hero-gradient {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #bfdbfe 100%);
+    }
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px -12px rgba(37, 99, 235, 0.15);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
+    }
+    .savings-badge {
+      animation: pulse-blue 2s infinite;
+    }
+    @keyframes pulse-blue {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+      50% { box-shadow: 0 0 0 12px rgba(37, 99, 235, 0); }
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-900 font-sans antialiased">
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md z-50 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 lg:h-20">
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-2">
+          <div class="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <span class="font-heading font-bold text-xl text-gray-900">NexCompare</span>
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden lg:flex items-center gap-8">
+          <a href="#" class="text-gray-600 hover:text-primary-600 font-medium transition-colors">Compare</a>
+          <a href="#" class="text-gray-600 hover:text-primary-600 font-medium transition-colors">How it works</a>
+          <a href="#" class="text-gray-600 hover:text-primary-600 font-medium transition-colors">Reviews</a>
+          <a href="#" class="text-gray-600 hover:text-primary-600 font-medium transition-colors">Guides</a>
+        </nav>
+
+        <!-- CTA -->
+        <div class="hidden lg:flex items-center gap-4">
+          <a href="#" class="text-gray-600 hover:text-primary-600 font-medium transition-colors">Sign In</a>
+          <a href="#" class="btn-primary px-5 py-2.5 rounded-full text-white font-semibold">Get Started</a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobileMenuBtn" class="lg:hidden p-2 text-gray-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden lg:hidden bg-white border-t border-gray-100">
+      <div class="px-4 py-4 space-y-3">
+        <a href="#" class="block py-2 text-gray-600 font-medium">Buying a Property</a>
+        <a href="#" class="block py-2 text-gray-600 font-medium">Selling a Property</a>
+        <a href="#" class="block py-2 text-gray-600 font-medium">Remortgaging</a>
+        <a href="#" class="block py-2 text-gray-600 font-medium">Auction Conveyancing</a>
+        <div class="pt-3 border-t border-gray-100">
+          <a href="#" class="btn-primary block text-center px-5 py-3 rounded-full text-white font-semibold">Get Started</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-gradient pt-28 lg:pt-36 pb-16 lg:pb-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <!-- Left Content -->
+        <div>
+          <div class="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm mb-6">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            <span class="text-sm font-medium text-gray-600">UK's #1 Comparison Hub · Est. 2014</span>
+          </div>
+          
+          <h1 class="font-heading font-extrabold text-4xl sm:text-5xl lg:text-6xl text-gray-900 leading-tight mb-6">
+            Compare<br>
+            <span class="text-primary-600">Conveyancers.</span><br>
+            Complete with confidence.
+          </h1>
+          
+          <p class="text-lg text-gray-600 mb-8 max-w-lg">
+            Compare trusted UK conveyancers for buying, selling, remortgaging and more. Fixed fees, no hidden costs, and faster completions — all in a few clicks.
+          </p>
+
+          <!-- Quick Compare Form -->
+          <div class="bg-white p-6 rounded-2xl shadow-lg shadow-primary-100/50 max-w-md">
+            <p class="font-semibold text-gray-900 mb-4">What property move are you making?</p>
+            <div class="space-y-3">
+              <select id="categorySelect" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                <option value="buying">Buying a Property</option>
+                <option value="selling">Selling a Property</option>
+                <option value="remortgage">Remortgaging</option>
+                <option value="auction">Buying at Auction</option>
+                <option value="equity">Transfer of Equity</option>
+                <option value="auction-sell">Selling at Auction</option>
+              </select>
+              <button class="btn-primary w-full py-3.5 rounded-xl text-white font-semibold flex items-center justify-center gap-2">
+                Get instant quotes
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                </svg>
+              </button>
+            </div>
+            <p class="text-sm text-gray-500 mt-3 text-center">SRA Regulated · Fixed Fees · No Hidden Costs</p>
+          </div>
+        </div>
+
+        <!-- Right - Stats Cards -->
+        <div class="relative">
+          <!-- Main Savings Card -->
+          <div class="bg-white rounded-3xl shadow-xl shadow-primary-100/30 p-8 relative z-10">
+            <div class="flex items-center gap-4 mb-6">
+              <div class="savings-badge w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-500">Average savings on</p>
+              <p id="categoryLabel" class="text-xl font-bold text-gray-900">Buying a Property</p>
+              </div>
+            </div>
+            <div class="flex items-baseline gap-1 mb-4">
+              <span class="text-5xl font-heading font-extrabold text-primary-600">£</span>
+              <span id="savingsAmount" class="text-6xl font-heading font-extrabold text-primary-600">300</span>
+            </div>
+            <p class="text-gray-500 text-sm">Based on average conveyancing savings from the last 12 months</p>
+          </div>
+
+          <!-- Floating Stats -->
+          <div class="absolute -top-4 -right-4 bg-white rounded-2xl shadow-lg p-4 z-20">
+            <div class="flex items-center gap-3">
+              <div class="flex -space-x-2">
+                <div class="w-8 h-8 bg-primary-100 rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-primary-700">JK</div>
+                <div class="w-8 h-8 bg-blue-100 rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-blue-700">SL</div>
+                <div class="w-8 h-8 bg-indigo-100 rounded-full border-2 border-white flex items-center justify-center text-xs font-bold text-indigo-700">MR</div>
+              </div>
+              <div>
+                <p class="font-bold text-gray-900">80+</p>
+                <p class="text-xs text-gray-500">Conveyancers</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rating Badge -->
+          <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg p-4 z-20">
+            <div class="flex items-center gap-2">
+              <div class="flex">
+                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              </div>
+              <div>
+                <p class="font-bold text-gray-900">4.8/5</p>
+                <p class="text-xs text-gray-500">162k reviews</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Bar -->
+  <section class="py-8 bg-white border-y border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center justify-center gap-8 lg:gap-16">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="font-semibold text-gray-900">FCA Regulated</p>
+            <p class="text-xs text-gray-500">Firm Ref: 123456</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="font-semibold text-gray-900">Bank-Level Security</p>
+            <p class="text-xs text-gray-500">256-bit encryption</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div>
+            <p class="font-semibold text-gray-900">Compare in Minutes</p>
+            <p class="text-xs text-gray-500">Quick & easy</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+          <div>
+            <p class="font-semibold text-gray-900">100% Free Service</p>
+            <p class="text-xs text-gray-500">No hidden fees</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="py-16 lg:py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="font-heading font-bold text-3xl lg:text-4xl text-gray-900 mb-4">One platform.Every property move.</h2>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">Whether you're buying, selling, or remortgaging — compare trusted conveyancers tailored to your exact situation.</p>
+      </div>
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+  <!-- Buying a Property -->
+  <a href="#" class="group bg-white border border-gray-200 rounded-2xl p-6 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    <div class="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-blue-100">
+      <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M3 12l9-9 9 9M4 10v10a1 1 0 001 1h4v-6h6v6h4a1 1 0 001-1V10"/>
+      </svg>
+    </div>
+    <div>
+      <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-blue-600">Buying a Property (Featured)</h3>
+      <p class="text-sm text-gray-500 mb-2">
+        Compare fixed-fee conveyancers for freehold & leasehold purchases. Fast and lender-approved.
+      </p>
+      <p class="text-sm font-semibold text-blue-600">Get quotes →</p>
+    </div>
+  </a>
+
+  <!-- Buying at Auction -->
+  <a href="#" class="group bg-white border border-gray-200 rounded-2xl p-6 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    <div class="w-14 h-14 bg-purple-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-purple-100">
+      <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M14 7l3 3M4 17l6-6 3 3-6 6H4v-3zM13 6l3-3 4 4-3 3-4-4z"/>
+      </svg>
+    </div>
+    <div>
+      <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-purple-600">Buying at Auction</h3>
+      <p class="text-sm text-gray-500 mb-2">
+        Meet tight deadlines with conveyancers experienced in auction legal packs.
+      </p>
+      <p class="text-sm font-semibold text-purple-600">Get quotes →</p>
+    </div>
+  </a>
+
+  <!-- Remortgaging -->
+  <a href="#" class="group bg-white border border-gray-200 rounded-2xl p-6 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    <div class="w-14 h-14 bg-green-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-green-100">
+      <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M4 4v6h6M20 20v-6h-6M5 19a9 9 0 0014-7M19 5a9 9 0 00-14 7"/>
+      </svg>
+    </div>
+    <div>
+      <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-green-600">Remortgaging</h3>
+      <p class="text-sm text-gray-500 mb-2">
+        Switch your mortgage easily with fast, low-cost legal support.
+      </p>
+      <p class="text-sm font-semibold text-green-600">Get quotes →</p>
+    </div>
+  </a>
+
+  <!-- Selling Your Home -->
+  <a href="#" class="group bg-white border border-gray-200 rounded-2xl p-6 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    <div class="w-14 h-14 bg-orange-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-orange-100">
+      <svg class="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M7 7h.01M3 11l8-8 10 10-8 8L3 11z"/>
+      </svg>
+    </div>
+    <div>
+      <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-orange-600">Selling Your Home</h3>
+      <p class="text-sm text-gray-500 mb-2">
+        Smooth contracts and completion with transparent, fixed-fee conveyancers.
+      </p>
+      <p class="text-sm font-semibold text-orange-600">Get quotes →</p>
+    </div>
+  </a>
+
+  <!-- Transfer of Equity -->
+  <a href="#" class="group bg-white border border-gray-200 rounded-2xl p-6 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    <div class="w-14 h-14 bg-pink-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-pink-100">
+      <svg class="w-7 h-7 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M17 20h5v-1a4 4 0 00-5-3.87M9 20H4v-1a4 4 0 015-3.87m0 0a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 10-4-4"/>
+      </svg>
+    </div>
+    <div>
+      <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-pink-600">Transfer of Equity</h3>
+      <p class="text-sm text-gray-500 mb-2">
+        Add or remove someone from a property title with expert legal guidance.
+      </p>
+      <p class="text-sm font-semibold text-pink-600">Get quotes →</p>
+    </div>
+  </a>
+
+  <!-- Selling at Auction -->
+  <a href="#" class="group bg-white border border-gray-200 rounded-2xl p-6 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+    <div class="w-14 h-14 bg-indigo-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-100">
+      <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+          d="M7 3h6l5 5v13a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1z"/>
+      </svg>
+    </div>
+    <div>
+      <h3 class="font-semibold text-gray-900 mb-1 group-hover:text-indigo-600">Selling at Auction</h3>
+      <p class="text-sm text-gray-500 mb-2">
+        Prepare legal packs and meet tight deadlines with specialist auction conveyancers.
+      </p>
+      <p class="text-sm font-semibold text-indigo-600">Get quotes →</p>
+    </div>
+  </a>
+
+</div>
+      
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="py-16 lg:py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="font-heading font-bold text-3xl lg:text-4xl text-gray-900 mb-4">How it works</h2>
+        <p class="text-lg text-gray-600">Compare in minutes.Move with confidence.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8 lg:gap-12">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-primary-600 text-white rounded-2xl flex items-center justify-center text-2xl font-heading font-bold mx-auto mb-6">1</div>
+          <h3 class="font-semibold text-xl text-gray-900 mb-3">Tell us about your move</h3>
+          <p class="text-gray-600">Answer a few quick questions about your property transaction. It takes less than 2 minutes.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-primary-600 text-white rounded-2xl flex items-center justify-center text-2xl font-heading font-bold mx-auto mb-6">2</div>
+          <h3 class="font-semibold text-xl text-gray-900 mb-3">Compare conveyancers</h3>
+          <p class="text-gray-600">See quotes from trusted, regulated conveyancers. Compare price, reviews, and completion speed.</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-primary-600 text-white rounded-2xl flex items-center justify-center text-2xl font-heading font-bold mx-auto mb-6">3</div>
+          <h3 class="font-semibold text-xl text-gray-900 mb-3">Choose and instruct</h3>
+          <p class="text-gray-600">Select your preferred conveyancer and get started immediately — no delays.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="py-16 lg:py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="font-heading font-bold text-3xl lg:text-4xl text-gray-900 mb-4">Loved by millions of UK customers</h2>
+        <div class="flex items-center justify-center gap-2">
+          <div class="flex">
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <span class="font-semibold text-gray-900">4.8 out of 5</span>
+          <span class="text-gray-500">from 162,000+ reviews</span>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-gray-50 rounded-2xl p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-700 font-bold">JK</div>
+            <div>
+              <p class="font-semibold text-gray-900">James K.</p>
+              <p class="text-sm text-gray-500">Manchester</p>
+            </div>
+          </div>
+          <div class="flex mb-3">
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-gray-600 mb-4">&quot;Saved £423 on my car insurance in less than 10 minutes. The whole process was incredibly simple.&quot;</p>
+          <p class="text-sm font-semibold text-primary-600">Saved £423 on Car Insurance</p>
+        </div>
+
+        <div class="bg-gray-50 rounded-2xl p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 font-bold">SL</div>
+            <div>
+              <p class="font-semibold text-gray-900">Sarah L.</p>
+              <p class="text-sm text-gray-500">Birmingham</p>
+            </div>
+          </div>
+          <div class="flex mb-3">
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-gray-600 mb-4">&quot;Finally got a broadband deal that actually delivers what it promises. Thanks CompareSmart!&quot;</p>
+          <p class="text-sm font-semibold text-primary-600">Saved £168 on Broadband</p>
+        </div>
+
+        <div class="bg-gray-50 rounded-2xl p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold">MR</div>
+            <div>
+              <p class="font-semibold text-gray-900">Michael R.</p>
+              <p class="text-sm text-gray-500">London</p>
+            </div>
+          </div>
+          <div class="flex mb-3">
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-gray-600 mb-4">&quot;Switched energy provider and now saving over £20 a month. Wish I had done this sooner!&quot;</p>
+          <p class="text-sm font-semibold text-primary-600">Saved £264 on Energy</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-16 lg:py-24 bg-primary-600">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="font-heading font-bold text-3xl lg:text-4xl text-white mb-6">Ready to start saving?</h2>
+      <p class="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">Join over 4 million UK customers who have already saved money by comparing and switching with CompareSmart.</p>
+      <a href="#" class="inline-flex items-center gap-2 bg-white text-primary-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-primary-50 transition-colors">
+        Start Comparing Now
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-12 lg:py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
+        <div class="col-span-2 lg:col-span-1">
+          <a href="#" class="flex items-center gap-2 mb-4">
+            <div class="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+            <span class="font-heading font-bold text-xl text-white">Compare<span class="text-primary-400">Smart</span></span>
+          </a>
+          <p class="text-sm">Helping UK households save money since 2024.</p>
+        </div>
+
+        <div>
+          <h4 class="font-semibold text-white mb-4">Insurance</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="hover:text-white transition-colors">Car Insurance</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Home Insurance</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Life Insurance</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Travel Insurance</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Pet Insurance</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold text-white mb-4">Utilities</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="hover:text-white transition-colors">Energy</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Broadband</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Mobile Phones</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">TV Packages</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold text-white mb-4">Finance</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="hover:text-white transition-colors">Credit Cards</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Personal Loans</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Mortgages</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Savings</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-semibold text-white mb-4">Company</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="hover:text-white transition-colors">About Us</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Press</a></li>
+            <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-sm">&copy; 2024 CompareSmart Ltd. All rights reserved.</p>
+        <div class="flex items-center gap-6 text-sm">
+          <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+          <a href="#" class="hover:text-white transition-colors">Terms of Use</a>
+          <a href="#" class="hover:text-white transition-colors">Cookie Policy</a>
+        </div>
+      </div>
+
+      <div class="mt-8 pt-8 border-t border-gray-800">
+        <p class="text-xs text-gray-500">CompareSmart Ltd is authorised and regulated by the Financial Conduct Authority (FCA). Firm reference number: 123456. Registered office: 123 Compare Street, London, EC1A 1AA. Registered in England and Wales. Company number: 12345678.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    });
+
+    // Category selector - update savings display
+    const savingsData = {
+      car: { label: 'Car Insurance', amount: '504' },
+      home: { label: 'Home Insurance', amount: '191' },
+      energy: { label: 'Energy', amount: '287' },
+      broadband: { label: 'Broadband', amount: '156' },
+      credit: { label: 'Credit Cards', amount: '713' },
+      loans: { label: 'Personal Loans', amount: '340' }
+    };
+
+    document.getElementById('categorySelect').addEventListener('change', function() {
+      const data = savingsData[this.value];
+      document.getElementById('categoryLabel').textContent = data.label;
+      document.getElementById('savingsAmount').textContent = data.amount;
+    });
+  </script>
+
+</body>
+</html>
