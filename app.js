@@ -209,8 +209,8 @@ function handleFormSubmit(event) {
       // fetchQuotesFromBackend(payload).then(response => {
       //    renderQuoteResults(response, rawData);
       // });
-      const results = calculateMockQuotes(activeTab, rawData);
-      renderQuoteResults(results, rawData);
+      const response = getMockTableBasedQuoteResponse(payload);
+      renderQuoteResults(response, rawData);
       
       const resultsSection = document.getElementById('results-section');
       resultsSection.classList.remove('hidden');
@@ -249,10 +249,17 @@ function goBackToForm() {
 
 // Prepare JSON payload for future backend connection
 function prepareQuotePayload(transactionType, formData) {
+  const typeMap = {
+    'selling': 1,
+    'buying': 2,
+    'combo': 3,
+    'remortgage': 4
+  };
   return {
-    transaction_type: transactionType,
-    sell_price: formData.sellPrice || null,
+    transaction_type: typeMap[transactionType] || 2,
+    transaction_key: transactionType,
     purchase_price: formData.purchasePrice || null,
+    sell_price: formData.sellPrice || null,
     property_value: formData.propertyValue || null,
     leasehold: formData.leasehold || "no",
     mortgage: formData.mortgage || "no",
@@ -281,137 +288,128 @@ async function fetchQuotesFromBackend(payload) {
 }
 
 /**
- * DYNAMIC MOCK CALCULATION ENGINE
- * // MOCK DATA ONLY - replace with PHP/backend response later
- * Easily replaceable with real backend calculations.
+ * DATABASE TABLE BASED MOCK RESPONSE GENERATOR
+ * Imitates response based on:
+ * - solicitors
+ * - legal_fee_ranges
+ * - fees_table
+ * - fees_name
+ * - fees_type
  */
-function calculateMockQuotes(transactionType, details) {
+function getMockTableBasedQuoteResponse(payload) {
+  const transactionKey = payload.transaction_key;
+  const price = payload.purchase_price || payload.sell_price || payload.property_value || 0;
+  
+  // 1. Calculate Base Legal Fees (Simulating legal_fee_ranges table lookup)
   let versusBase = 0;
   let reynardsBase = 0;
-  
-  const price = details.price;
-  
-  if (transactionType === 'selling') {
+
+  if (transactionKey === 'selling') {
     versusBase = 600 + Math.min(200, Math.floor(price / 4000));
     reynardsBase = 650 + Math.min(250, Math.floor(price / 3000));
-  } 
-  else if (transactionType === 'buying') {
+  } else if (transactionKey === 'buying') {
     versusBase = 580 + Math.min(220, Math.floor(price / 3500));
     reynardsBase = 640 + Math.min(260, Math.floor(price / 3000));
-  } 
-  else if (transactionType === 'combo') {
-    const sellPrice = details.sellPrice;
+  } else if (transactionKey === 'combo') {
+    const sellPrice = payload.sell_price || 0;
     versusBase = 1000 + Math.min(300, Math.floor((price + sellPrice) / 5000));
     reynardsBase = 1100 + Math.min(350, Math.floor((price + sellPrice) / 4000));
-  } 
-  else if (transactionType === 'remortgage') {
+  } else if (transactionKey === 'remortgage') {
     versusBase = 380 + Math.min(120, Math.floor(price / 5000));
     reynardsBase = 420 + Math.min(180, Math.floor(price / 4000));
   }
 
-  // Supplements lists
+  // 2. Supplements (Simulating fees_table / fees_name with type="supplement")
   const versusSupplements = [];
   const reynardsSupplements = [];
 
-  // Selling / combined leasehold
-  if ((transactionType === 'selling' && details.leasehold) || (transactionType === 'combo' && details.sellLeasehold)) {
-    versusSupplements.push({ name: 'Leasehold Sale Supplement', amount: 150 });
-    reynardsSupplements.push({ name: 'Leasehold Sale Supplement', amount: 180 });
-  }
-  
-  // Buying / combined leasehold
-  if ((transactionType === 'buying' && details.leasehold) || (transactionType === 'combo' && details.buyLeasehold) || (transactionType === 'remortgage' && details.leasehold)) {
-    versusSupplements.push({ name: 'Leasehold Transaction Supplement', amount: 150 });
-    reynardsSupplements.push({ name: 'Leasehold Transaction Supplement', amount: 180 });
+  // Leasehold Supplement
+  if (payload.leasehold === 'yes') {
+    versusSupplements.push({ fee_name_id: 1, name: 'Leasehold Transaction Supplement (inc VAT)', type: 'supplement', amount: 150.00 });
+    reynardsSupplements.push({ fee_name_id: 1, name: 'Leasehold Transaction Supplement (inc VAT)', type: 'supplement', amount: 180.00 });
   }
 
-  // Selling mortgage pay off
-  if ((transactionType === 'selling' && details.mortgage) || (transactionType === 'combo' && details.sellMortgage)) {
-    versusSupplements.push({ name: 'Mortgage Discharge Handling', amount: 95 });
-    reynardsSupplements.push({ name: 'Mortgage Discharge Handling', amount: 95 });
+  // Mortgage pay off (Selling)
+  if (transactionKey === 'selling' && payload.mortgage === 'yes') {
+    versusSupplements.push({ fee_name_id: 2, name: 'Mortgage Discharge Handling (inc VAT)', type: 'supplement', amount: 95.00 });
+    reynardsSupplements.push({ fee_name_id: 2, name: 'Mortgage Discharge Handling (inc VAT)', type: 'supplement', amount: 95.00 });
   }
 
-  // Buying mortgage
-  if ((transactionType === 'buying' && details.mortgage) || (transactionType === 'combo' && details.buyMortgage)) {
-    versusSupplements.push({ name: 'Mortgage Inception/Lender Panel Fee', amount: 95 });
-    reynardsSupplements.push({ name: 'Mortgage Inception/Lender Panel Fee', amount: 120 });
+  // Mortgage inception (Buying)
+  if (transactionKey === 'buying' && payload.mortgage === 'yes') {
+    versusSupplements.push({ fee_name_id: 3, name: 'Mortgage Inception/Lender Panel Fee (inc VAT)', type: 'supplement', amount: 95.00 });
+    reynardsSupplements.push({ fee_name_id: 3, name: 'Mortgage Inception/Lender Panel Fee (inc VAT)', type: 'supplement', amount: 120.00 });
   }
 
   // New Build
-  if ((transactionType === 'buying' && details.newBuild) || (transactionType === 'combo' && details.buyNewBuild)) {
-    versusSupplements.push({ name: 'New Build Purchase Supplement', amount: 195 });
-    reynardsSupplements.push({ name: 'New Build Purchase Supplement', amount: 250 });
+  if (payload.new_build === 'yes') {
+    versusSupplements.push({ fee_name_id: 4, name: 'New Build Purchase Supplement (inc VAT)', type: 'supplement', amount: 195.00 });
+    reynardsSupplements.push({ fee_name_id: 4, name: 'New Build Purchase Supplement (inc VAT)', type: 'supplement', amount: 250.00 });
   }
 
   // Buy to let / second home
-  if ((transactionType === 'buying' && details.secondHome) || (transactionType === 'combo' && details.buySecondHome)) {
-    versusSupplements.push({ name: 'Buy-to-Let / Second Home Handling', amount: 80 });
-    reynardsSupplements.push({ name: 'Buy-to-Let / Second Home Handling', amount: 110 });
+  if (payload.buy_to_let === 'yes') {
+    versusSupplements.push({ fee_name_id: 5, name: 'Buy-to-Let / Second Home Handling (inc VAT)', type: 'supplement', amount: 80.00 });
+    reynardsSupplements.push({ fee_name_id: 5, name: 'Buy-to-Let / Second Home Handling (inc VAT)', type: 'supplement', amount: 110.00 });
   }
 
   // Corporate Purchase
-  if ((transactionType === 'buying' && details.company) || (transactionType === 'combo' && details.buyCompany) || (transactionType === 'remortgage' && details.company)) {
-    versusSupplements.push({ name: 'Corporate Ownership Handling', amount: 120 });
-    reynardsSupplements.push({ name: 'Corporate Ownership Handling', amount: 160 });
+  if (payload.company_purchase === 'yes') {
+    versusSupplements.push({ fee_name_id: 6, name: 'Corporate Ownership Handling (inc VAT)', type: 'supplement', amount: 120.00 });
+    reynardsSupplements.push({ fee_name_id: 6, name: 'Corporate Ownership Handling (inc VAT)', type: 'supplement', amount: 160.00 });
   }
 
   // Non-UK resident
-  if ((transactionType === 'buying' && details.nonUk) || (transactionType === 'combo' && details.buyNonUk)) {
-    versusSupplements.push({ name: 'Non-UK Resident Supplement', amount: 150 });
-    reynardsSupplements.push({ name: 'Non-UK Resident Supplement', amount: 200 });
+  if (payload.non_uk_resident === 'yes') {
+    versusSupplements.push({ fee_name_id: 7, name: 'Non-UK Resident Supplement (inc VAT)', type: 'supplement', amount: 150.00 });
+    reynardsSupplements.push({ fee_name_id: 7, name: 'Non-UK Resident Supplement (inc VAT)', type: 'supplement', amount: 200.00 });
   }
 
-  // Remortgage transfer of equity
-  if (transactionType === 'remortgage' && details.transfer) {
-    versusSupplements.push({ name: 'Transfer of Equity Handling', amount: 120 });
-    reynardsSupplements.push({ name: 'Transfer of Equity Handling', amount: 150 });
-  }
-
-  const versusSuppTotal = versusSupplements.reduce((sum, item) => sum + item.amount, 0);
-  const reynardsSuppTotal = reynardsSupplements.reduce((sum, item) => sum + item.amount, 0);
-
-  // VAT at 20% on legal fees + supplements
-  const versusVat = Math.round((versusBase + versusSuppTotal) * 0.2);
-  const reynardsVat = Math.round((reynardsBase + reynardsSuppTotal) * 0.2);
-
-  // Third-party Disbursements
+  // 3. Disbursements (Simulating fees_table / fees_name with type="disbursement")
   const versusDisbursements = [];
   const reynardsDisbursements = [];
 
-  // AML identity verification check
-  const people = details.peopleCount || 1;
-  const sellers = details.sellersCount || 1;
-  const totalPeople = (transactionType === 'combo') ? (people + sellers) : people;
+  const buyers = payload.buyers_count || 1;
+  const sellers = payload.sellers_count || 1;
+  const totalPeople = (transactionKey === 'combo') ? (buyers + sellers) : buyers;
 
-  versusDisbursements.push({ name: `Anti-Money Laundering ID Verification (x${totalPeople})`, amount: 15 * totalPeople });
-  reynardsDisbursements.push({ name: `Anti-Money Laundering ID Verification (x${totalPeople})`, amount: 18 * totalPeople });
+  // AML Verification check
+  versusDisbursements.push({ fee_name_id: 8, name: `Anti-Money Laundering ID Verification (x${totalPeople})`, type: 'disbursement', amount: 15.00 * totalPeople });
+  reynardsDisbursements.push({ fee_name_id: 8, name: `Anti-Money Laundering ID Verification (x${totalPeople})`, type: 'disbursement', amount: 18.00 * totalPeople });
 
-  // Bank Transfer (CHAPS transfer of funds)
-  versusDisbursements.push({ name: 'CHAPS Bank Transfer Administration', amount: 30 });
-  reynardsDisbursements.push({ name: 'CHAPS Bank Transfer Administration', amount: 35 });
+  // Bank Transfer
+  versusDisbursements.push({ fee_name_id: 9, name: 'CHAPS Bank Transfer Administration', type: 'disbursement', amount: 30.00 });
+  reynardsDisbursements.push({ fee_name_id: 9, name: 'CHAPS Bank Transfer Administration', type: 'disbursement', amount: 35.00 });
 
   // Search Pack (Buying/Combo only)
-  if (transactionType === 'buying' || transactionType === 'combo') {
-    versusDisbursements.push({ name: 'Regulated Search Pack (Local, Environmental, Drainage)', amount: 215 });
-    reynardsDisbursements.push({ name: 'Regulated Search Pack (Local, Environmental, Drainage)', amount: 240 });
+  if (transactionKey === 'buying' || transactionKey === 'combo') {
+    versusDisbursements.push({ fee_name_id: 10, name: 'Regulated Search Pack (Local, Environmental, Drainage)', type: 'disbursement', amount: 215.00 });
+    reynardsDisbursements.push({ fee_name_id: 10, name: 'Regulated Search Pack (Local, Environmental, Drainage)', type: 'disbursement', amount: 240.00 });
     
-    versusDisbursements.push({ name: 'Bankruptcy Official Search', amount: 2 * people });
-    reynardsDisbursements.push({ name: 'Bankruptcy Official Search', amount: 2 * people });
+    versusDisbursements.push({ fee_name_id: 11, name: 'Bankruptcy Official Search', type: 'disbursement', amount: 2.00 * totalPeople });
+    reynardsDisbursements.push({ fee_name_id: 11, name: 'Bankruptcy Official Search', type: 'disbursement', amount: 2.00 * totalPeople });
     
-    versusDisbursements.push({ name: 'HM Land Registry OS1 Priority Search', amount: 3 });
-    reynardsDisbursements.push({ name: 'HM Land Registry OS1 Priority Search', amount: 3 });
+    versusDisbursements.push({ fee_name_id: 12, name: 'HM Land Registry OS1 Priority Search', type: 'disbursement', amount: 3.00 });
+    reynardsDisbursements.push({ fee_name_id: 12, name: 'HM Land Registry OS1 Priority Search', type: 'disbursement', amount: 3.00 });
   }
 
-  // Land Registry Registration fee (scaled with price)
-  if (transactionType === 'buying' || transactionType === 'combo' || transactionType === 'remortgage') {
-    let lrFee = 20;
-    if (price > 100000 && price <= 200000) lrFee = 30;
-    else if (price > 200000 && price <= 500000) lrFee = 80;
-    else if (price > 500000) lrFee = 150;
+  // HM Land Registry Fee (scaled with price)
+  if (transactionKey === 'buying' || transactionKey === 'combo' || transactionKey === 'remortgage') {
+    let lrFee = 20.00;
+    if (price > 100000 && price <= 200000) lrFee = 30.00;
+    else if (price > 200000 && price <= 500000) lrFee = 80.00;
+    else if (price > 500000) lrFee = 150.00;
 
-    versusDisbursements.push({ name: 'HM Land Registry Registration Fee', amount: lrFee });
-    reynardsDisbursements.push({ name: 'HM Land Registry Registration Fee', amount: lrFee });
+    versusDisbursements.push({ fee_name_id: 13, name: 'HM Land Registry Registration Fee', type: 'disbursement', amount: lrFee });
+    reynardsDisbursements.push({ fee_name_id: 13, name: 'HM Land Registry Registration Fee', type: 'disbursement', amount: lrFee });
   }
+
+  // VAT (20%) on legal base fee + supplements
+  const versusSuppTotal = versusSupplements.reduce((sum, item) => sum + item.amount, 0);
+  const reynardsSuppTotal = reynardsSupplements.reduce((sum, item) => sum + item.amount, 0);
+
+  const versusVat = Math.round((versusBase + versusSuppTotal) * 0.2);
+  const reynardsVat = Math.round((reynardsBase + reynardsSuppTotal) * 0.2);
 
   const versusDisbTotal = versusDisbursements.reduce((sum, item) => sum + item.amount, 0);
   const reynardsDisbTotal = reynardsDisbursements.reduce((sum, item) => sum + item.amount, 0);
@@ -421,96 +419,166 @@ function calculateMockQuotes(transactionType, details) {
   const reynardsTotal = reynardsBase + reynardsSuppTotal + reynardsVat + reynardsDisbTotal;
 
   return {
-    versus: {
-      base: versusBase,
-      supplements: versusSupplements,
-      suppTotal: versusSuppTotal,
-      vat: versusVat,
-      disbursements: versusDisbursements,
-      disbTotal: versusDisbTotal,
-      total: versusTotal
-    },
-    reynards: {
-      base: reynardsBase,
-      supplements: reynardsSupplements,
-      suppTotal: reynardsSuppTotal,
-      vat: reynardsVat,
-      disbursements: reynardsDisbursements,
-      disbTotal: reynardsDisbTotal,
-      total: reynardsTotal
-    }
+    success: true,
+    quotes: [
+      {
+        solicitor_id: 1,
+        solicitor_name: "Versus Law",
+        solicitor_logo: "1778473407_vc.png",
+        legal_fee: versusBase,
+        supplements: versusSupplements,
+        disbursements: versusDisbursements,
+        vat: versusVat,
+        total: versusTotal
+      },
+      {
+        solicitor_id: 2,
+        solicitor_name: "Reynards Law",
+        solicitor_logo: "reynards_logo.png",
+        legal_fee: reynardsBase,
+        supplements: reynardsSupplements,
+        disbursements: reynardsDisbursements,
+        vat: reynardsVat,
+        total: reynardsTotal
+      }
+    ]
   };
 }
 
-// Render results in card UI
-function renderQuoteResults(results, details) {
+// Render results dynamically from quotes response
+function renderQuoteResults(response, details) {
   // Update Summary Header Text
   let summaryText = '';
+  const priceVal = details.price || 0;
   if (activeTab === 'selling') {
-    summaryText = `Selling Property at £${details.price.toLocaleString()} · Leasehold: ${details.leasehold ? 'Yes' : 'No'} · Mortgage Payoff: ${details.mortgage ? 'Yes' : 'No'}`;
+    summaryText = `Selling Property at £${priceVal.toLocaleString()} · Leasehold: ${details.leasehold === 'yes' ? 'Yes' : 'No'} · Mortgage Payoff: ${details.mortgage === 'yes' ? 'Yes' : 'No'}`;
   } else if (activeTab === 'buying') {
-    summaryText = `Buying Property at £${details.price.toLocaleString()} · Leasehold: ${details.leasehold ? 'Yes' : 'No'} · Mortgage: ${details.mortgage ? 'Yes' : 'No'} · New Build: ${details.newBuild ? 'Yes' : 'No'}`;
+    summaryText = `Buying Property at £${priceVal.toLocaleString()} · Leasehold: ${details.leasehold === 'yes' ? 'Yes' : 'No'} · Mortgage: ${details.mortgage === 'yes' ? 'Yes' : 'No'} · New Build: ${details.newBuild === 'yes' ? 'Yes' : 'No'}`;
   } else if (activeTab === 'combo') {
-    summaryText = `Buying at £${details.price.toLocaleString()} & Selling at £${details.sellPrice.toLocaleString()} · Buy Leasehold: ${details.buyLeasehold ? 'Yes' : 'No'}`;
+    const sellPriceVal = details.sellPrice || 0;
+    summaryText = `Buying at £${priceVal.toLocaleString()} & Selling at £${sellPriceVal.toLocaleString()} · Buy Leasehold: ${details.buyLeasehold === 'yes' ? 'Yes' : 'No'}`;
   } else if (activeTab === 'remortgage') {
-    summaryText = `Remortgaging at Value £${details.price.toLocaleString()} · Leasehold: ${details.leasehold ? 'Yes' : 'No'} · Ownership Transfer: ${details.transferOfOwnership ? 'Yes' : 'No'}`;
+    summaryText = `Remortgaging at Value £${priceVal.toLocaleString()} · Leasehold: ${details.leasehold === 'yes' ? 'Yes' : 'No'} · Ownership Transfer: ${details.transferOfOwnership === 'yes' ? 'Yes' : 'No'}`;
   }
   document.getElementById('results-summary').textContent = summaryText;
 
-  // Update Versus Law Cards
-  document.getElementById('versus-total-price').textContent = `£${results.versus.total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-  document.getElementById('versus-legal-fee').textContent = `£${results.versus.base.toFixed(2)}`;
-  document.getElementById('versus-supp-fee').textContent = `£${results.versus.suppTotal.toFixed(2)}`;
-  document.getElementById('versus-vat-fee').textContent = `£${results.versus.vat.toFixed(2)}`;
-  document.getElementById('versus-disb-fee').textContent = `£${results.versus.disbTotal.toFixed(2)}`;
+  const quotesGrid = document.getElementById('quotes-grid');
+  quotesGrid.innerHTML = ''; // Clear fallback cards
 
-  // Update Reynards Cards
-  document.getElementById('reynards-total-price').textContent = `£${results.reynards.total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-  document.getElementById('reynards-legal-fee').textContent = `£${results.reynards.base.toFixed(2)}`;
-  document.getElementById('reynards-supp-fee').textContent = `£${results.reynards.suppTotal.toFixed(2)}`;
-  document.getElementById('reynards-vat-fee').textContent = `£${results.reynards.vat.toFixed(2)}`;
-  document.getElementById('reynards-disb-fee').textContent = `£${results.reynards.disbTotal.toFixed(2)}`;
-
-  // Generate Disbursement HTML breakdowns
-  generateDisbursementHTML('breakdown-versus', results.versus);
-  generateDisbursementHTML('breakdown-reynards', results.reynards);
-  
-  // Close any open breakdowns by default
-  document.getElementById('breakdown-versus').classList.add('hidden');
-  document.getElementById('breakdown-reynards').classList.add('hidden');
-  document.getElementById('arrow-versus').classList.remove('rotate-180');
-  document.getElementById('arrow-reynards').classList.remove('rotate-180');
-}
-
-// Detailed disbursement sublist generator
-function generateDisbursementHTML(targetId, quoteData) {
-  const container = document.getElementById(targetId);
-  let html = '<div class="space-y-3">';
-  
-  // Supplements list if any
-  if (quoteData.supplements.length > 0) {
-    html += '<p class="font-bold text-slate-700 uppercase tracking-wider text-[10px]">Legal supplements included:</p><ul class="space-y-1 pl-2 border-l border-slate-200 mb-3">';
-    quoteData.supplements.forEach(supp => {
-      html += `<li class="flex justify-between text-slate-600"><span>- ${supp.name}</span><span class="font-semibold text-slate-700">£${supp.amount.toFixed(2)}</span></li>`;
-    });
-    html += '</ul>';
+  if (!response || !response.quotes || response.quotes.length === 0) {
+    quotesGrid.innerHTML = '<div class="col-span-2 text-center py-8 text-slate-500 font-medium">No quotes available.</div>';
+    return;
   }
 
-  // Third party disbursements
-  html += '<p class="font-bold text-slate-700 uppercase tracking-wider text-[10px]">Third-party fees (Disbursements):</p><ul class="space-y-1 pl-2 border-l border-slate-200">';
-  quoteData.disbursements.forEach(disb => {
-    html += `<li class="flex justify-between text-slate-600"><span>- ${disb.name}</span><span class="font-semibold text-slate-700">£${disb.amount.toFixed(2)}</span></li>`;
-  });
-  html += '</ul>';
+  response.quotes.forEach((quote, index) => {
+    const suppTotal = quote.supplements.reduce((sum, item) => sum + item.amount, 0);
+    const disbTotal = quote.disbursements.reduce((sum, item) => sum + item.amount, 0);
+    
+    const isRecommended = index === 0;
+    const cardBorderClass = isRecommended ? 'border-2 border-primary-600 shadow-xl' : 'border border-slate-200 shadow-md hover:shadow-lg';
+    const btnClass = isRecommended ? 'btn-primary text-white' : 'bg-slate-200 hover:bg-slate-300 text-slate-800';
+    const badgeHtml = isRecommended ? `
+      <div class="bg-primary-600 text-white text-xs font-bold uppercase tracking-wider py-1.5 px-4 absolute top-0 right-0 rounded-bl-xl">
+        Demo Quote · Recommended
+      </div>` : '';
 
-  html += '</div>';
-  container.innerHTML = html;
+    const initials = quote.solicitor_name.split(' ').map(n => n[0]).join('');
+
+    // Generate detailed breakdown HTML
+    let breakdownHtml = '<div class="space-y-3">';
+    if (quote.supplements.length > 0) {
+      breakdownHtml += '<p class="font-bold text-slate-700 uppercase tracking-wider text-[10px]">Legal supplements included:</p><ul class="space-y-1 pl-2 border-l border-slate-200 mb-3">';
+      quote.supplements.forEach(supp => {
+        breakdownHtml += `<li class="flex justify-between text-slate-600"><span>- ${supp.name}</span><span class="font-semibold text-slate-700">£${supp.amount.toFixed(2)}</span></li>`;
+      });
+      breakdownHtml += '</ul>';
+    }
+    breakdownHtml += '<p class="font-bold text-slate-700 uppercase tracking-wider text-[10px]">Third-party fees (Disbursements):</p><ul class="space-y-1 pl-2 border-l border-slate-200">';
+    quote.disbursements.forEach(disb => {
+      breakdownHtml += `<li class="flex justify-between text-slate-600"><span>- ${disb.name}</span><span class="font-semibold text-slate-700">£${disb.amount.toFixed(2)}</span></li>`;
+    });
+    breakdownHtml += '</ul></div>';
+
+    const cardHtml = `
+      <div class="bg-white rounded-3xl ${cardBorderClass} overflow-hidden relative flex flex-col justify-between transition-all duration-300">
+        ${badgeHtml}
+        
+        <div class="p-6 md:p-8 space-y-6 flex-1">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 bg-primary-50 rounded-2xl flex items-center justify-center text-primary-700 font-bold border border-primary-100">${initials}</div>
+            <div>
+              <h4 class="font-heading font-extrabold text-2xl text-primary-900">${quote.solicitor_name}</h4>
+              <div class="flex items-center gap-1.5 text-amber-500 mt-0.5">
+                <div class="flex">
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                  <svg class="w-4 h-4 ${isRecommended ? 'text-amber-500' : 'text-slate-300'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                </div>
+                <span class="text-xs font-bold text-slate-500">4.8/5 (Demo Rating)</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 flex justify-between items-center">
+            <div>
+              <p class="text-xs font-semibold text-slate-600 uppercase tracking-wider">Fixed Legal Fee</p>
+              <p class="text-[10px] text-slate-500 mt-0.5">Subject to confirmation</p>
+            </div>
+            <div class="text-right">
+              <span class="text-3xl font-heading font-extrabold text-slate-900">£${quote.total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+              <p class="text-xs text-slate-500 font-semibold">inc. VAT & disbursements</p>
+            </div>
+          </div>
+          
+          <div class="space-y-2.5 text-sm">
+            <div class="flex justify-between text-slate-600">
+              <span>Legal Solicitor Fees (Fixed)</span>
+              <span class="font-semibold text-slate-800">£${quote.legal_fee.toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span>Supplements</span>
+              <span class="font-semibold text-slate-800">£${suppTotal.toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span>VAT on Legal Fees (20%)</span>
+              <span class="font-semibold text-slate-800">£${quote.vat.toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between text-slate-600">
+              <span>Disbursements (Third-Party Costs)</span>
+              <span class="font-semibold text-slate-800">£${disbTotal.toFixed(2)}</span>
+            </div>
+          </div>
+          
+          <div class="border-t border-slate-100 pt-4">
+            <button type="button" onclick="toggleDisbursementBreakdown('${quote.solicitor_id}')" class="text-sm font-bold text-primary-600 hover:text-primary-800 flex items-center gap-1">
+              <span>Detailed Disbursement Breakdown</span>
+              <svg id="arrow-${quote.solicitor_id}" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+            <div id="breakdown-${quote.solicitor_id}" class="hidden mt-3 bg-slate-50 rounded-xl p-4 border border-slate-200 text-xs space-y-2">
+              ${breakdownHtml}
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-6 md:p-8 bg-slate-50 border-t border-slate-100">
+          <button type="button" onclick="instructSolicitor('${quote.solicitor_name}')" class="${btnClass} w-full py-3.5 rounded-xl font-extrabold text-sm text-center shadow-md transition-all duration-300">
+            Choose ${quote.solicitor_name}
+          </button>
+        </div>
+      </div>
+    `;
+    quotesGrid.insertAdjacentHTML('beforeend', cardHtml);
+  });
 }
 
 // Toggle accordion drawer for breakdowns
-function toggleDisbursementBreakdown(cardType) {
-  const breakdown = document.getElementById('breakdown-' + cardType);
-  const arrow = document.getElementById('arrow-' + cardType);
+function toggleDisbursementBreakdown(solicitorId) {
+  const breakdown = document.getElementById('breakdown-' + solicitorId);
+  const arrow = document.getElementById('arrow-' + solicitorId);
   
   breakdown.classList.toggle('hidden');
   arrow.classList.toggle('rotate-180');
@@ -535,3 +603,4 @@ function closeSuccessModal() {
     goBackToForm();
   }, 155);
 }
+
