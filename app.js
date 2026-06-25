@@ -200,21 +200,25 @@ function handleFormSubmit(event) {
     } else {
       clearInterval(interval);
       
-      // Complete loading, show results
-      loadingOverlay.classList.add('hidden');
-      formElement.classList.remove('hidden'); // keep form ready if they click edit
-      document.getElementById('calculator-box').classList.add('hidden'); // hide full box
-      
-      // MOCK DATA ONLY - replace with backend calculation response when integration is connected:
-      // fetchQuotesFromBackend(payload).then(response => {
-      //    renderQuoteResults(response, rawData);
-      // });
-      const response = getMockTableBasedQuoteResponse(payload);
-      renderQuoteResults(response, rawData);
-      
-      const resultsSection = document.getElementById('results-section');
-      resultsSection.classList.remove('hidden');
-      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Try to fetch quotes from the database-driven PHP backend API
+      fetchQuotesFromBackend(payload)
+        .then(response => {
+          // Complete loading, show results
+          loadingOverlay.classList.add('hidden');
+          formElement.classList.remove('hidden'); // keep form ready if they click edit
+          document.getElementById('calculator-box').classList.add('hidden'); // hide full box
+          
+          renderQuoteResults(response, rawData);
+          const resultsSection = document.getElementById('results-section');
+          resultsSection.classList.remove('hidden');
+          resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        })
+        .catch(err => {
+          console.error("Backend API call failed:", err);
+          loadingOverlay.classList.add('hidden');
+          formElement.classList.remove('hidden');
+          showError('We encountered an error calculating your quote from the database. Please try again.');
+        });
     }
   }, 350);
 }
@@ -276,15 +280,25 @@ function prepareQuotePayload(transactionType, formData) {
   };
 }
 
-// Placeholder async function for real backend request
+// Fetch conveyancing quotes from the database-driven PHP backend API
 async function fetchQuotesFromBackend(payload) {
-  // Future backend integration:
-  // return fetch('/whatsapp/compare.php', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(payload)
-  // }).then(res => res.json());
-  return null;
+  // PHP calculates quotes from provided backend tables.
+  // JavaScript only displays the API response.
+  const response = await fetch('api/get-quotes.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+  if (!response.ok) {
+    throw new Error(`API returned HTTP status ${response.status}`);
+  }
+  const result = await response.json();
+  if (result && result.success === false) {
+    throw new Error(result.error || 'Unknown backend API error');
+  }
+  return result;
 }
 
 /**
