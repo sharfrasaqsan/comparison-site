@@ -493,7 +493,7 @@ function renderQuoteResults(response, details) {
     const btnClass = isRecommended ? 'btn-primary text-white' : 'bg-slate-200 hover:bg-slate-300 text-slate-800';
     const badgeHtml = isRecommended ? `
       <div class="bg-primary-600 text-white text-xs font-bold uppercase tracking-wider py-1.5 px-4 absolute top-0 right-0 rounded-bl-xl">
-        Demo Quote · Recommended
+        Quote · Recommended
       </div>` : '';
 
     const initials = quote.solicitor_name.split(' ').map(n => n[0]).join('');
@@ -530,7 +530,7 @@ function renderQuoteResults(response, details) {
                   <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                   <svg class="w-4 h-4 ${isRecommended ? 'text-amber-500' : 'text-slate-300'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                 </div>
-                <span class="text-xs font-bold text-slate-500">4.8/5 (Demo Rating)</span>
+                <span class="text-xs font-bold text-slate-500">4.8/5 (Rating)</span>
               </div>
             </div>
           </div>
@@ -598,23 +598,8 @@ function toggleDisbursementBreakdown(solicitorId) {
   arrow.classList.toggle('rotate-180');
 }
 
-// Success Modal control
+// Success Redirect
 function instructSolicitor(solicitorName) {
-  document.getElementById('modal-solicitor-name').textContent = solicitorName;
-  
-  const modal = document.getElementById('success-modal');
-  modal.classList.remove('hidden');
-  modal.firstElementChild.classList.remove('scale-95');
-  modal.firstElementChild.classList.add('scale-100');
-}
-
-function closeSuccessModal() {
-  const modal = document.getElementById('success-modal');
-  modal.firstElementChild.classList.remove('scale-100');
-  modal.firstElementChild.classList.add('scale-95');
-  setTimeout(() => {
-    modal.classList.add('hidden');
-    goBackToForm();
-  }, 155);
+  window.location.href = 'thank-you.html?solicitor=' + encodeURIComponent(solicitorName);
 }
 

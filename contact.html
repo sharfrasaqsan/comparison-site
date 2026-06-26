@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us – Versus Law Conveyancing Comparison</title>
+  <meta name="description" content="Get in touch with Versus Law Conveyancing Comparison for questions regarding our platform.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+              400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
+              800: '#1e40af', 900: '#1e3a8a', 950: '#172554'
+            },
+            accent: {
+              50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd', 300: '#7dd3fc',
+              400: '#38bdf8', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1',
+              800: '#075985', 900: '#0c4a6e', 950: '#082f49'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            heading: ['Plus Jakarta Sans', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased flex flex-col min-h-screen">
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md z-50 border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 lg:h-20">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M6 8l6-3 6 3M3 13h6M15 13h6M6 13c0 2 1.5 3.5 3 3.5S12 15 12 13M12 13c0 2 1.5 3.5 3 3.5s3-1.5 3-3.5M6 21h12"/>
+            </svg>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-heading font-extrabold text-xl text-slate-900 tracking-tight leading-none">VERSUS<span class="text-primary-600">LAW</span></span>
+            <span class="text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-0.5">Conveyancing</span>
+          </div>
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden lg:flex items-center gap-8">
+          <a href="index.html#quote-section" class="text-slate-600 hover:text-primary-700 font-semibold transition-colors">Compare Quotes</a>
+          <a href="how-it-works.html" class="text-slate-600 hover:text-primary-700 font-semibold transition-colors">How It Works</a>
+          <a href="about.html" class="text-slate-600 hover:text-primary-700 font-semibold transition-colors">About</a>
+          <a href="contact.html" class="text-primary-700 font-bold transition-colors">Contact</a>
+        </nav>
+
+        <!-- CTA -->
+        <div class="hidden lg:flex items-center gap-4">
+          <span class="text-sm font-semibold text-slate-600">Need help? 0161 249 5087</span>
+          <a href="index.html#quote-section" class="bg-primary-600 hover:bg-primary-700 px-6 py-2.5 rounded-full text-white font-bold text-sm shadow-md transition-all">Get Quote</a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobileMenuBtn" class="lg:hidden p-2 text-slate-600" aria-label="Toggle navigation menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden lg:hidden bg-white border-t border-slate-100">
+      <div class="px-4 py-4 space-y-3 shadow-inner">
+        <a href="index.html#quote-section" class="block py-2 text-slate-600 font-semibold border-b border-slate-50" onclick="toggleMobileMenu()">Compare Quotes</a>
+        <a href="how-it-works.html" class="block py-2 text-slate-600 font-semibold border-b border-slate-50" onclick="toggleMobileMenu()">How It Works</a>
+        <a href="about.html" class="block py-2 text-slate-600 font-semibold border-b border-slate-50" onclick="toggleMobileMenu()">About</a>
+        <a href="contact.html" class="block py-2 text-slate-600 font-semibold border-b border-slate-50" onclick="toggleMobileMenu()">Contact</a>
+        <div class="pt-3">
+          <a href="index.html#quote-section" class="bg-primary-600 block text-center px-5 py-3 rounded-full text-white font-bold shadow-md" onclick="toggleMobileMenu()">Get Quote Now</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <main class="flex-grow pt-28 lg:pt-36 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="font-heading font-extrabold text-4xl sm:text-5xl text-slate-900 leading-tight mb-4 text-center">
+        Contact <span class="text-primary-600">Us</span>
+      </h1>
+      <p class="text-slate-600 text-center max-w-xl mx-auto mb-12 text-sm md:text-base">
+        Have questions about comparing conveyancing quotes? Send us a message and our team will get back to you.
+      </p>
+
+      <div class="grid lg:grid-cols-12 gap-8 items-start">
+        <!-- Contact details -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+            <h3 class="font-heading font-bold text-xl text-primary-950">Our Contact Details</h3>
+            <p class="text-sm text-slate-600">For general queries about our conveyancing comparison system:</p>
+            
+            <div class="space-y-3 pt-2 text-sm text-slate-700">
+              <p><strong>Email:</strong> info@versuslaw.co.uk</p>
+              <p><strong>Phone:</strong> 0161 249 5087</p>
+              <p><strong>Business Hours:</strong> Mon-Fri 9:00am - 5:30pm</p>
+            </div>
+          </div>
+
+          <div class="bg-amber-50 border border-amber-200 rounded-3xl p-6 text-sm text-amber-900 space-y-2">
+            <h4 class="font-heading font-bold">Need Urgent Legal Help?</h4>
+            <p class="leading-relaxed">
+              Versus Law is a comparison technology platform. For urgent legal updates, please contact your solicitor directly.
+            </p>
+          </div>
+        </div>
+
+        <!-- Contact form -->
+        <div class="lg:col-span-7 bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-md">
+          <div id="contact-success" class="hidden space-y-4 text-center py-8">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <h3 class="font-heading font-extrabold text-2xl text-slate-900">Message Received!</h3>
+            <p class="text-sm text-slate-600">Thank you for contacting us. Our team will review your enquiry and respond shortly.</p>
+            <button onclick="resetContactForm()" class="btn-primary inline-block text-white font-bold px-6 py-2.5 rounded-full text-sm mt-4 shadow-sm">
+              Send Another Message
+            </button>
+          </div>
+
+          <form id="contact-form" onsubmit="submitContactForm(event)" class="space-y-6">
+            <!-- Form fields -->
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label for="contact_name" class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Full Name</label>
+                <input type="text" id="contact_name" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm">
+              </div>
+              <div>
+                <label for="contact_email" class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Email Address</label>
+                <input type="email" id="contact_email" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm">
+              </div>
+            </div>
+
+            <div>
+              <label for="contact_phone" class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Phone Number (Optional)</label>
+              <input type="tel" id="contact_phone" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm">
+            </div>
+
+            <div>
+              <label for="contact_message" class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Your Message</label>
+              <textarea id="contact_message" rows="5" required class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all text-sm"></textarea>
+            </div>
+
+            <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all text-sm uppercase tracking-wider">
+              Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-primary-950 text-slate-400 py-12 lg:py-16 border-t border-primary-900 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+        <div class="col-span-1 md:col-span-2">
+          <a href="index.html" class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-primary-900 rounded-xl flex items-center justify-center border border-accent-400">
+              <svg class="w-6 h-6 text-accent-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M6 8l6-3 6 3M3 13h6M15 13h6M6 13c0 2 1.5 3.5 3 3.5S12 15 12 13M12 13c0 2 1.5 3.5 3 3.5s3-1.5 3-3.5M6 21h12"/>
+              </svg>
+            </div>
+            <span class="font-heading font-extrabold text-xl text-white tracking-tight uppercase">VERSUS<span class="text-accent-400">LAW</span></span>
+          </a>
+          <p class="text-sm text-slate-400 max-w-sm">Comparing SRA regulated conveyancers across the UK. Dynamic, fixed-fee legal pricing with zero hidden disbursements.</p>
+        </div>
+
+        <div>
+          <h4 class="font-heading font-bold text-white mb-4">Transaction Types</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="index.html#quote-section" class="hover:text-white transition-colors">Buying Property</a></li>
+            <li><a href="index.html#quote-section" class="hover:text-white transition-colors">Selling Property</a></li>
+            <li><a href="index.html#quote-section" class="hover:text-white transition-colors">Buying & Selling</a></li>
+            <li><a href="index.html#quote-section" class="hover:text-white transition-colors">Remortgage Support</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-heading font-bold text-white mb-4">Support & Contact</h4>
+          <p class="text-sm text-slate-400">Email: info@versuslaw.co.uk</p>
+          <p class="text-sm text-slate-400 mt-1">Phone: 0161 249 5087</p>
+          <p class="text-xs text-slate-500 mt-4">Hours: Mon-Fri 9am - 5:30pm</p>
+        </div>
+      </div>
+
+      <div class="border-t border-primary-900 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-sm">&copy; 2026 Versus Law Ltd. All rights reserved.</p>
+        <div class="flex items-center gap-6 text-sm">
+          <a href="privacy-policy.html" class="hover:text-white transition-colors">Privacy Policy</a>
+          <a href="terms-and-conditions.html" class="hover:text-white transition-colors">Terms of Use</a>
+          <a href="cookie-policy.html" class="hover:text-white transition-colors">Cookie Policy</a>
+          <a href="contact.html" class="hover:text-white transition-colors">Contact</a>
+        </div>
+      </div>
+
+      <div class="mt-8 pt-8 border-t border-primary-900">
+        <p class="text-xs text-slate-500 leading-relaxed">Versus Law Conveyancing Comparison is a legal technology comparison platform. Comparison quotes generated are estimations for testing purposes and are subject to full formal instruction verification. All solicitors partnered are independent firms regulated by the Solicitors Regulation Authority (SRA) or the Council for Licensed Conveyancers (CLC).</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMobileMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+    document.getElementById('mobileMenuBtn').addEventListener('click', toggleMobileMenu);
+
+    function submitContactForm(event) {
+      event.preventDefault();
+      document.getElementById('contact-form').classList.add('hidden');
+      document.getElementById('contact-success').classList.remove('hidden');
+    }
+
+    function resetContactForm() {
+      document.getElementById('contact-form').reset();
+      document.getElementById('contact-form').classList.remove('hidden');
+      document.getElementById('contact-success').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
