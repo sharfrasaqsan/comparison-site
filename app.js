@@ -259,25 +259,79 @@ function prepareQuotePayload(transactionType, formData) {
     'combo': 3,
     'remortgage': 4
   };
-  return {
-    transaction_type: typeMap[transactionType] || 2,
+  const tType = typeMap[transactionType] || 2;
+  
+  const payload = {
+    transaction_type: tType,
     transaction_key: transactionType,
-    purchase_price: formData.purchasePrice || null,
-    sell_price: formData.sellPrice || null,
-    property_value: formData.propertyValue || null,
-    leasehold: formData.leasehold || "no",
-    mortgage: formData.mortgage || "no",
-    first_time_buyer: formData.firstTimeBuyer || "no",
-    buy_to_let: formData.buyToLet || "no",
-    new_build: formData.newBuild || "no",
-    company_purchase: formData.companyPurchase || "no",
-    non_uk_resident: formData.nonUkResident || "no",
-    buyers_count: formData.buyersCount || null,
-    sellers_count: formData.sellersCount || null,
     customer_name: formData.customerName || "",
     customer_email: formData.customerEmail || "",
     customer_phone: formData.customerPhone || ""
   };
+
+  if (tType === 1) {
+    payload.sell_price = formData.sellPrice || null;
+    payload.mortgage = formData.mortgage || "no";
+    payload.leasehold = formData.leasehold || "no";
+    payload.sellers_count = formData.sellersCount || null;
+    
+    // Backend specific fields
+    payload.selling_mortgage = formData.mortgage || "no";
+    payload.selling_leasehold = formData.leasehold || "no";
+    payload.sellers = formData.sellersCount || 1;
+  } 
+  else if (tType === 2) {
+    payload.purchase_price = formData.purchasePrice || null;
+    payload.mortgage = formData.mortgage || "no";
+    payload.leasehold = formData.leasehold || "no";
+    payload.first_time_buyer = formData.firstTimeBuyer || "no";
+    payload.buy_to_let = formData.buyToLet || "no";
+    payload.new_build = formData.newBuild || "no";
+    payload.company_purchase = formData.companyPurchase || "no";
+    payload.non_uk_resident = formData.nonUkResident || "no";
+    payload.buyers_count = formData.buyersCount || null;
+    
+    // Backend specific fields
+    payload.buying_mortgage = formData.mortgage || "no";
+    payload.buying_leasehold = formData.leasehold || "no";
+    payload.let_or_2nd_home = formData.buyToLet || "no";
+    payload.is_a_company = formData.companyPurchase || "no";
+    payload.buyers = formData.buyersCount || 1;
+  }
+  else if (tType === 3) {
+    payload.purchase_price = formData.purchasePrice || null;
+    payload.sell_price = formData.sellPrice || null;
+    payload.first_time_buyer = formData.firstTimeBuyer || "no";
+    payload.buy_to_let = formData.buyToLet || "no";
+    payload.new_build = formData.newBuild || "no";
+    payload.company_purchase = formData.companyPurchase || "no";
+    payload.non_uk_resident = formData.nonUkResident || "no";
+    payload.buyers_count = formData.buyersCount || null;
+    payload.sellers_count = formData.sellersCount || null;
+
+    // Backend specific fields
+    payload.selling_mortgage = formData.sellMortgage || "no";
+    payload.selling_leasehold = formData.sellLeasehold || "no";
+    payload.sellers = formData.sellersCount || 1;
+    payload.buying_mortgage = formData.mortgage || "no";
+    payload.buying_leasehold = formData.buyLeasehold || "no";
+    payload.let_or_2nd_home = formData.buyToLet || "no";
+    payload.is_a_company = formData.companyPurchase || "no";
+    payload.buyers = formData.buyersCount || 1;
+  }
+  else if (tType === 4) {
+    payload.property_value = formData.propertyValue || null;
+    payload.leasehold = formData.leasehold || "no";
+    payload.transfer_of_ownership = formData.transferOfOwnership || "no";
+    payload.company_purchase = formData.companyPurchase || "no";
+
+    // Backend specific fields
+    payload.remortgage_leasehold = formData.leasehold || "no";
+    payload.transfer_of_ownership = formData.transferOfOwnership || "no";
+    payload.registered_to_a_company = formData.companyPurchase || "no";
+  }
+
+  return payload;
 }
 
 // Fetch conveyancing quotes from the database-driven PHP backend API
